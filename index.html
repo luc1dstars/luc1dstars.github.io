@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>luc1d's Portfolio</title>
+
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 60px;
+      margin-bottom: 30px;
+    }
+
+    p {
+      font-size: 20px;
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.6;
+    }
+
+    .copy-box {
+      background: #222;
+      border: 2px solid #444;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 30px auto;
+      width: 80%;
+      max-width: 700px;
+      font-size: 18px;
+      word-wrap: break-word;
+    }
+
+    button {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 10px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #666;
+    }
+
+    video {
+      margin-top: 30px;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 800px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>luc1d's scripting information</h1>
+
+  <p>
+    Welcome to my portfolio!
+    <br><br>
+
+    I've been scripting for a few months, and I've been learning about Luau & JavaScript.
+    Most of my work is done on Roblox (SCP: Roleplay).
+
+    <br><br>
+
+    I have made a Discord bot.
+    Examples of my work will be included in videos & files.
+  </p>
+
+  <!-- COPYABLE TEXT -->
+  <div class="copy-box" id="copyText">
+    @cat_named_muffin#0000
+  </div>
+
+  <button onclick="copyText()">
+    Copy Roblox Profile
+  </button>
+
+  <br><br>
+
+  <!-- ROBLOX BUTTON -->
+  <a href="https://www.roblox.com/users/7689148436/profile" target="_blank">
+    <button>Roblox</button>
+  </a>
+  <!-- VIDEO -->
+  <br><br>
+
+  <video controls>
+    <source src="yourvideo.mp4" type="video/mp4">
+    Your browser does not support videos.
+  </video>
+
+  <script>
+    function copyText() {
+      const text =
+        document.getElementById("copyText").innerText;
+
+      navigator.clipboard.writeText(text);
+    }
+  </script>
+
+</body>
+</html>
