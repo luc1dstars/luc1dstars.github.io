@@ -1,0 +1,97 @@
+local command1 = "!warn"
+local command2 = "!warnings"
+local command3 = "!clearwarnings"
+
+local canClearwarnings = false -- True: Mod can clear their own warnings | False: Mod can clear only others warnings
+
+local mods = {
+["meely323"] = true,
+["morcrane"] = true,
+["ryan_16101"] = true,
+["MrVladelets"] = true
+}
+------------ End of Settings. Do not edit anything beyond here unless I say so
+local function isMod(plr)
+return mods[plr] == true
+end
+
+local warnings = {}
+
+local host = getHost()
+for _, name in ipairs(getPlayers()) do
+    if getUserId(name) == getHost() then
+        host = name
+        break
+end
+end
+
+local function getPlayerFromPartial(name)
+    name = string.lower(name)
+
+    for _, player in pairs(getPlayers()) do
+        if string.find(string.lower(player), name, 1, true) then
+            return player
+        end
+    end
+
+    return nil
+end
+
+event("chatted", function(data)
+    local plr = data.Value[1]
+    local msg = data.Value[2]
+
+if msg:sub(1,#command1) == command1 and isMod(plr) then
+
+     local partialName = string.lower(msg:sub(7))
+     local target = getPlayerFromPartial(msg:sub(#command1 + 2))
+
+
+    if target then
+        
+        warnings[target] = (warnings[target] or 0) + 1
+        setPlayerScore(target, warnings[target])
+
+        announce(target,"[WARNING]: " .. plr .. " has warned you. \nTotal warnings: " .. warnings[target])
+        announce(plr,"[SYSTEM]: Successfully warned " .. target)
+
+        if warnings[target] >= 3 then
+            runCommand("kick " .. target .. " [SYSTEM]: You have reached 3 warnings, initiated AutoKick. Responsible moderator: " .. plr)
+        end
+    end
+end 
+
+if msg:sub(1,#command2) == command2 and isMod(plr) then
+
+    local target = getPlayerFromPartial(msg:sub(#command2 + 2))
+
+    if target then
+        local count = warnings[target] or 0
+        announce(plr,"[SYSTEM]: " .. target .. " has " .. count .. " warning(s).")
+    else
+        announce(plr,"[FAILURE]: Player not found.")
+    end
+end
+
+  if msg:sub(1,#command3) == command3 and isMod(plr) then
+
+        local target = getPlayerFromPartial(msg:sub(#command3 + 2))
+
+        if not target then
+            announce(plr,"[FAILURE]: Player not found.")
+            return
+        end
+
+        if not canClearwarnings and target == plr then
+            announce(plr,"[WARNING]: You cannot clear your own warnings.")
+            return
+        end
+
+        warnings[target] = 0
+        setPlayerScore(target, 0)
+
+        announce(plr,"[SYSTEM]: Cleared warnings for " .. target)
+
+        announce(target,"[SYSTEM]: Your warnings were cleared by " .. plr)
+    end
+end)

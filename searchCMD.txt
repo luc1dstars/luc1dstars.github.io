@@ -1,0 +1,84 @@
+local searchCmd = "!search"
+-- The command used to search players.
+
+local contraband = {
+-- Items that will be confiscated if found when searching.
+    ["AK-47"] = true,
+    ["M4"] = true,
+    ["Pistol"] = true,
+    ["Crowbar"] = true,
+    ["Item5"] = true,
+    ["Item6"] = true,
+    ["Item7"] = true
+}
+
+local staffTeams = {
+-- The names of teams that will be able to use the cmd. Host is always able to use it.
+    ["Police"] = true,
+    ["Security"] = true,
+    ["Moderator"] = true
+}
+-------------------------------------------------- End of Settings, don't edit beyond here.
+local function isStaff(plr)
+    local team = getTeam(plr)
+    return staffTeams[team] == true or getUserId(plr) == getHost()
+end
+
+local function getPlayerFromPartial(name)
+    name = string.lower(name)
+
+    for _, player in pairs(getPlayers()) do
+        if string.find(string.lower(player), name, 1, true) then
+            return player
+        end
+    end
+
+    return nil
+end
+
+event("chatted", function(data)
+    local plr = data.Value[1]
+    local msg = data.Value[2]
+
+    if msg:sub(1,#searchCmd) == searchCmd then
+
+        if not isStaff(plr) then
+            announce(plr,"[SYSTEM]: You are not authorized.")
+            return
+        end
+
+        local target = getPlayerFromPartial(msg:sub(#searchCmd + 2))
+
+        if not target then
+            announce(plr,"[SYSTEM]: Player not found.")
+            return
+        end
+
+        local foundItems = {}
+
+        for itemName in pairs(contraband) do
+
+            if hasTool(target, itemName) then
+
+                table.insert(foundItems, itemName)
+
+                removeTool(target, itemName)
+            end
+        end
+
+        if #foundItems <= 0 then
+
+            announce(plr,"[SEARCH]: No contraband found on " .. target)
+
+            announce(target,"[SEARCH]: You were searched by ".. plr .. "\nNo contraband was found.",true)
+
+            return
+        end
+
+        local itemList = table.concat(foundItems, ", ")
+
+        announce(plr,"[SEARCH]: Found contraband on " .. target .. ": "  .. itemList)
+
+        announce(target,"[SEARCH]: Illegal contraband confiscated: ".. itemList)
+    end
+end)
